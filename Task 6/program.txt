@@ -1,0 +1,109 @@
+undefined8 main(undefined8 param_1,long param_2)
+
+{
+  int __edflag;
+  char *__block;
+  FILE *__stream;
+  FILE *__stream_00;
+  size_t sVar1;
+
+  __block = (char *)malloc(0x59);
+  __stream = fopen64(*(char **)(param_2 + 8),"rb");
+  __stream_00 = fopen64(*(char **)(param_2 + 0x10),"wb");
+  while( true ) {
+    sVar1 = fread(__block,1,0x59,__stream);
+    __edflag = (int)sVar1;
+    if (__edflag < 1) break;
+    encrypt(__block,__edflag);
+    fwrite(__block,1,(long)__edflag,__stream_00);
+  }
+  fclose(__stream);
+  fclose(__stream_00);
+  free(__block);
+  return 0;
+}
+
+void encrypt(char *__block,int __edflag)
+
+{
+  substitute(__block,__edflag);
+  permutate(__block,__edflag);
+  substitute(__block,__edflag);
+  substitute(__block,__edflag);
+  permutate(__block,__edflag);
+  substitute(__block,__edflag);
+  substitute(__block,__edflag);
+  xor(__block,__edflag);
+  permutate(__block,__edflag);
+  xor(__block,__edflag);
+  substitute(__block,__edflag);
+  xor(__block,__edflag);
+  return;
+}
+
+
+
+void substitute(long param_1,int param_2)
+
+{
+  int local_c;
+
+  for (local_c = 0; local_c < param_2; local_c = local_c + 1) {
+    *(undefined1 *)(param_1 + local_c) = substitution_table[(int)(uint)*(byte *)(param_1 + local_c)]
+    ;
+  }
+  return;
+}
+
+
+
+void permutate(long param_1,int param_2)
+
+{
+  undefined auStack_38 [40];
+  int local_10;
+  int local_c;
+
+  for (local_c = 0; local_c < param_2 + -0x1a; local_c = local_c + 0x1b) {
+    for (local_10 = 0; local_10 < 0x1b; local_10 = local_10 + 1) {
+      auStack_38[local_10] =
+           *(undefined *)(param_1 + (int)(local_c + (uint)(byte)permutation[local_10]));
+    }
+    for (local_10 = 0; local_10 < 0x1b; local_10 = local_10 + 1) {
+      *(undefined *)((local_10 + local_c) + param_1) = auStack_38[local_10];
+    }
+  }
+  return;
+}
+
+void substitute(long param_1,int param_2)
+
+{
+  int local_c;
+
+  for (local_c = 0; local_c < param_2; local_c = local_c + 1) {
+    *(undefined1 *)(param_1 + local_c) = substitution_table[(int)(uint)*(byte *)(param_1 + local_c)]
+    ;
+  }
+  return;
+}
+
+
+
+void xor(long param_1,int param_2)
+
+{
+  int local_10;
+  int local_c;
+
+  local_10 = 0;
+  for (local_c = 0; local_c < param_2; local_c = local_c + 1) {
+    *(byte *)(param_1 + local_c) = *(byte *)(param_1 + local_c) ^ xor_key[local_10];
+    local_10 = (local_10 + 1) % 0x28;
+  }
+  return;
+}
+
+
+
+
